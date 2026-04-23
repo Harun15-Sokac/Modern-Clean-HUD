@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generated Page</title>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style id="sections-styles">
+#section-top-hud {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: auto;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1;
+  transform: scale(var(--scale-factor));
+  transform-origin: top right;
+  padding-right: 20px;
+  padding-top: 30px;
+  opacity: 1;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.top-hud-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 0;
+}
+
+.hud-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.hud-label {
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.hud-value {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.hud-icon-wrapper {
+  position: relative;
+  width: 35px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hexagon-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 255, 8);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  z-index: 1;
+}
+
+.hud-icon-img {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  z-index: 2;
+  object-fit: contain;
+}
+
+body.hud-loading #section-bottom-hud,
+body.hud-loading #status-bar-second,
+body.hud-loading #section-car-hud {
+  opacity: 0;
+  transform: translateY(6px) scale(var(--scale-factor));
+  pointer-events: none;
+}
+
+#section-bottom-hud,
+#status-bar-second,
+#section-car-hud {
+  opacity: 1;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+body.hud-loading #section-top-hud {
+  opacity: 0;
+  transform: translateX(24px) scale(var(--scale-factor));
+  pointer-events: none;
+}
+
+#section-spacer {
+  flex-grow: 1;
+  min-height: 50px;
+}
+
+#section-bottom-hud {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  z-index: 1;
+  transform: scale(var(--scale-factor));
+  transform-origin: bottom left;
+  padding-left: 20px;
+  padding-bottom: 10px;
+}
+
+.bottom-hud-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0;
+}
+
+.location-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 10px;
+}
+
+.location-area.theme-second {
+  margin-left: 60px;
+}
+
+.compass-n {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.location-divider {
+  width: 2px;
+  height: 28px;
+  background-color: rgb(255, 255, 255);
+}
+
+.location-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.location-zone {
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.location-street {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.location-pin {
+  width: 19px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.location-pin::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(26, 255, 0);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: 1;
+}
+
+.location-pin img {
+  position: relative;
+  z-index: 2;
+  width: 9px;
+  height: 9px;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-bar-vertical {
+  position: fixed;
+  bottom: 20px;
+  left: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  z-index: 10;
+  transform: scale(var(--scale-factor));
+  transform-origin: bottom left;
+}
+
+.status-item {
+  position: relative;
+  width: 55px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  isolation: isolate;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.status-item.hidden-keep-space {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  width: 55px;
+  height: 60px;
+  min-width: 55px;
+  min-height: 60px;
+  flex: 0 0 55px;
+  margin: 0;
+}
+
+.status-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ring-bg {
+  width: 38px;
+  height: 38px;
+  z-index: 1;
+  filter: none;
+  opacity: 0.92;
+}
+
+.ring-fill {
+  width: 46px;
+  height: 46px;
+  z-index: 2;
+  filter: none;
+  opacity: 0.55;
+}
+
+.ring-border {
+  width: 46px;
+  height: 46px;
+  z-index: 2;
+  filter: none;
+  opacity: 0.92;
+}
+
+.armor-border-wrapper {
+  width: 46px;
+  height: 46px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  z-index: 2;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.armor-border-wrapper .armor-border-svg {
+  width: 100%;
+  height: 100%;
+  filter: none;
+  opacity: 1;
+}
+
+
+
+.status-icon {
+  position: relative;
+  z-index: 3;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.status-badge {
+  width: 24px;
+  height: 24px;
+  background-color: rgb(0, 255, 8);
+  border: 1px solid rgb(0, 255, 8);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
+}
+
+.status-badge span {
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+#section-weapon-ammo {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  width: auto;
+  z-index: 1;
+  transform: translateY(-50%) scale(var(--scale-factor));
+  transform-origin: center right;
+  padding-right: 20px;
+}
+
+.weapon-ammo-container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 3px 21px;
+  position: relative;
+}
+
+.weapon-icon {
+  position: relative;
+  width: 70px;
+  height: 50px;
+  min-width: 70px;
+  min-height: 50px;
+  max-width: 70px;
+  max-height: 50px;
+  object-fit: contain;
+}
+
+.weapon-ammo-text {
+  margin-top: 5px;
+  font-size: 18px;
+  position: relative;
+  width: fit-content;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  color: transparent;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.weapon-ammo-current {
+  color: #ffffff;
+}
+
+.weapon-ammo-separator {
+  color: #8a8a8abd;
+  font-size: 14.8px;
+}
+
+.weapon-ammo-max {
+  color: #8a8a8abd;
+  font-size: 14.8px;
+}
+
+.ammo-icon {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  width: 27px;
+  height: 27px;
+  margin-left: 8px;
+  background-color: var(--hud-primary-color, #1aff00);
+  -webkit-mask: url(images/ammo.png) no-repeat center;
+  mask: url(images/ammo.png) no-repeat center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+#section-dashboard {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+#section-dashboard.show {
+  display: flex;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.dashboard-container {
+  width: 100%;
+  max-width: 650px;
+  background-color: #1b1b1b;
+  border: 1px solid var(--hud-primary-color, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 15px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dash-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.dash-subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.header-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.close-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.close-text:hover {
+  opacity: 0.7;
+}
+
+.manager-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.esc-button {
+  border: 1px solid var(--hud-primary-color, rgba(255, 255, 255, 0.2));
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
+}
+
+.esc-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.separator-line {
+  height: 1px;
+  background-color: var(--hud-primary-color, rgba(255, 255, 255, 0.1));
+  width: 100%;
+  opacity: 0.4;
+}
+
+.separator-line-thin {
+  height: 1px;
+  background-color: var(--hud-primary-color, rgba(255, 255, 255, 0.1));
+  width: 96%;
+  margin: 0 auto;
+  opacity: 0.2;
+}
+
+.search-container {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  margin: 0 12px;
+  gap: 10px;
+  transition: border-color 0.3s ease;
+}
+
+.search-container:focus-within {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.5;
+}
+
+.search-input {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.group-header h2 {
+  font-size: 13px;
+  margin: 0;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.reset-btn {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: color 0.2s ease;
+}
+
+.reset-btn:hover {
+  color: #ffffff;
+}
+
+.setting-row {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 65px;
+  transition: all 0.2s ease;
+}
+
+.setting-row:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.icon-wrapper {
+  width: 36px;
+  height: 36px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.icon-wrapper.transparent-bg {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.edit-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+}
+
+.row-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row-text h3 {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.row-text p {
+  font-size: 12px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.row-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.color-display {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  gap: 10px;
+  height: 36px;
+  min-width: 90px;
+  transition: border-color 0.2s ease;
+}
+
+.color-display:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.color-box.green {
+  background-color: #1aff00;
+}
+
+.color-code {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: monospace;
+}
+
+.save-btn {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  height: 36px;
+  padding: 0 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.toggle-group {
+  display: flex;
+  gap: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.toggle-btn {
+  background-color: transparent !important;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  border-radius: 6px;
+  height: 28px;
+  padding: 0 16px;
+  font-size: 12px;
+  min-width: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn.active {
+  background-color: var(--hud-primary-color, #1aff00) !important;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-btn:not(.active):hover {
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+#section-car-hud {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  z-index: 100;
+  opacity: 1;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+#section-car-hud.show {
+  display: flex;
+}
+
+.speedometer-container {
+  position: relative;
+  width: 260px;
+  height: 200px;
+}
+
+.speedo-rings {
+  position: absolute;
+  top: 20px;
+  left: 18px;
+  width: 193px;
+  height: 162px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 193px;
+  height: 162px;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.ring-inner-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 193px;
+  height: 162px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.ring-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 193px;
+  height: 162px;
+  object-fit: contain;
+  display: block;
+}
+
+.speed-display {
+  position: absolute;
+  top: 75px;
+  left: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+}
+
+.speed-value {
+  font-size: 54px;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.speed-unit {
+  font-size: 14px;
+  margin-top: 5px;
+  color: #ffffff;
+}
+
+.fuel-icon {
+  position: absolute;
+  top: 140px;
+  left: 214px;
+  width: 18px;
+  height: 18px;
+}
+
+.speedo-dots {
+  position: absolute;
+  top: 112px;
+  left: 192px;
+  width: 68px;
+  height: 75px;
+}
+
+.dot-1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.dot-2-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.dot-2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: brightness(0) saturate(0) invert(48%) sepia(100%) saturate(2600%) hue-rotate(90deg);
+}
+
+.car-status-bar {
+  display: flex;
+  gap: 15px;
+  margin-top: -10px;
+  align-items: center;
+  justify-content: center;
+  width: 260px;
+  transform: translateX(-15px);
+}
+
+.car-status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.car-status-item img {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+.shortcut-key {
+  border: 1px solid #26ff00;
+  border-radius: 5px;
+  background-color: rgba(47, 47, 47, 0);
+  padding: 2px 4px;
+  min-width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.shortcut-key span {
+  font-size: 10px;
+  color: #ffffff;
+}
+
+  </style>
+  <script src="global.js" defer></script>
+</head>
+<body>
+<section id="section-top-hud">
+  <div class="container top-hud-container">
+
+    <div class="hud-info-row">
+      <div class="hud-text">
+        <span class="hud-label">Job</span>
+        <span class="hud-value" id="hud-job">Unemployed</span>
+      </div>
+      <div class="hud-icon-wrapper">
+        <div class="hexagon-bg"></div>
+        <img src="images/job-icon.svg" alt="Job" class="hud-icon-img">
+      </div>
+    </div>
+
+    <div class="hud-info-row" style="transform: translateX(-60px);">
+      <div class="hud-text">
+        <span class="hud-label">Wallet</span>
+        <span class="hud-value" id="hud-wallet">$0</span>
+      </div>
+      <div class="hud-icon-wrapper">
+        <div class="hexagon-bg"></div>
+        <img src="images/647531f9673fab0d8ae705b61efd876b1058dff4.png" alt="Wallet" class="hud-icon-img">
+      </div>
+    </div>
+
+    <div class="hud-info-row">
+      <div class="hud-text">
+        <span class="hud-label">Bank</span>
+        <span class="hud-value" id="hud-bank">$0</span>
+      </div>
+      <div class="hud-icon-wrapper">
+        <div class="hexagon-bg"></div>
+        <img src="images/cf8cb3034c7e7ec1a961ab9abb3fb350beb9193d.png" alt="Bank" class="hud-icon-img">
+      </div>
+    </div>
+
+  </div>
+</section>
+<section id="section-spacer"></section>
+
+<section id="section-bottom-hud">
+  <div class="container bottom-hud-container">
+
+    <div class="location-area">
+      <div class="compass-n" id="compass-direction">N</div>
+      <div class="location-divider"></div>
+      <div class="location-details">
+        <div class="location-zone" id="location-zone">Los Santos</div>
+        <div class="location-street" id="location-street">Strawborry Avenue</div>
+      </div>
+    </div>
+
+    <div class="status-bar" id="status-bar-main">
+
+      <div class="status-item">
+        <img src="images/1_5.svg" class="status-ring ring-bg" alt="">
+
+        <div class="status-ring armor-border-wrapper" id="voice-border-wrapper">
+          <img src="images/1_8.svg" class="status-ring ring-border armor-border-svg" id="voice-border-svg" alt="">
+        </div>
+        <img src="images/39663ae9eda3e600b9036d0609177995505b5823.png" class="status-icon" alt="Microphone">
+      </div>
+
+      <div class="status-item" id="health-item">
+        <img src="images/1_19.svg" class="status-ring ring-bg" alt="">
+
+        <div class="status-ring armor-border-wrapper" id="health-border-wrapper" style="display: none;">
+          <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="health-border-svg" alt="">
+        </div>
+        <img src="images/d8587b916c593baf6d1139216087f1ccf35cc5dc.png" class="status-icon" alt="Health">
+      </div>
+
+      <div class="status-item" id="armor-item">
+        <img src="images/1_25.svg" class="status-ring ring-bg" alt="">
+
+        <div class="status-ring armor-border-wrapper" id="armor-border-wrapper" style="display: none;">
+          <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="armor-border-svg" alt="">
+        </div>
+        <img src="images/4bd88e3cfd45fb5011e80d4727d3d59fb73952fd.png" class="status-icon" alt="Armor">
+      </div>
+
+      <div class="status-item" id="hunger-item">
+        <img src="images/1_31.svg" class="status-ring ring-bg" alt="">
+
+        <div class="status-ring armor-border-wrapper" id="hunger-border-wrapper" style="display: none;">
+          <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="hunger-border-svg" alt="">
+        </div>
+        <img src="images/fa9cc5db817d7dbfd830c68c99ca3c9eb5c476cb.png" class="status-icon" alt="Hunger">
+      </div>
+
+      <div class="status-item" id="thirst-item">
+        <img src="images/1_37.svg" class="status-ring ring-bg" alt="">
+
+        <div class="status-ring armor-border-wrapper" id="thirst-border-wrapper" style="display: none;">
+          <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="thirst-border-svg" alt="">
+        </div>
+        <img src="images/cb11bfcf5c079c8672de58cb1f587d93695fa5dc.png" class="status-icon" alt="Thirst">
+      </div>
+
+      <div class="status-item" id="stamina-item">
+        <img src="images/1_43.svg" class="status-ring ring-bg" alt="">
+
+        <div class="status-ring armor-border-wrapper" id="stamina-border-wrapper" style="display: none;">
+          <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="stamina-border-svg" alt="">
+        </div>
+        <img src="images/d44d124803c90acc444053768a6b00711aac0a16.png" class="status-icon" alt="Stamina">
+      </div>
+
+      <div class="status-badge">
+        <span>2x</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="status-bar-vertical" id="status-bar-second">
+  <div class="status-item" id="voice-item-second">
+    <img src="images/1_5.svg" class="status-ring ring-bg" alt="">
+
+    <div class="status-ring armor-border-wrapper" id="voice-border-wrapper-second">
+      <img src="images/1_8.svg" class="status-ring ring-border armor-border-svg" id="voice-border-svg-second" alt="">
+    </div>
+    <img src="images/39663ae9eda3e600b9036d0609177995505b5823.png" class="status-icon" alt="Microphone">
+  </div>
+
+  <div class="status-item" id="health-item-second">
+    <img src="images/1_19.svg" class="status-ring ring-bg" alt="">
+
+    <div class="status-ring armor-border-wrapper" id="health-border-wrapper-second" style="display: none;">
+      <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="health-border-svg-second" alt="">
+    </div>
+    <img src="images/d8587b916c593baf6d1139216087f1ccf35cc5dc.png" class="status-icon" alt="Health">
+  </div>
+
+  <div class="status-item" id="armor-item-second">
+    <img src="images/1_25.svg" class="status-ring ring-bg" alt="">
+
+    <div class="status-ring armor-border-wrapper" id="armor-border-wrapper-second" style="display: none;">
+      <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="armor-border-svg-second" alt="">
+    </div>
+    <img src="images/4bd88e3cfd45fb5011e80d4727d3d59fb73952fd.png" class="status-icon" alt="Armor">
+  </div>
+
+  <div class="status-item" id="hunger-item-second">
+    <img src="images/1_31.svg" class="status-ring ring-bg" alt="">
+
+    <div class="status-ring armor-border-wrapper" id="hunger-border-wrapper-second" style="display: none;">
+      <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="hunger-border-svg-second" alt="">
+    </div>
+    <img src="images/fa9cc5db817d7dbfd830c68c99ca3c9eb5c476cb.png" class="status-icon" alt="Hunger">
+  </div>
+
+  <div class="status-item" id="thirst-item-second">
+    <img src="images/1_37.svg" class="status-ring ring-bg" alt="">
+
+    <div class="status-ring armor-border-wrapper" id="thirst-border-wrapper-second" style="display: none;">
+      <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="thirst-border-svg-second" alt="">
+    </div>
+    <img src="images/cb11bfcf5c079c8672de58cb1f587d93695fa5dc.png" class="status-icon" alt="Thirst">
+  </div>
+
+  <div class="status-item" id="stamina-item-second">
+    <img src="images/1_43.svg" class="status-ring ring-bg" alt="">
+
+    <div class="status-ring armor-border-wrapper" id="stamina-border-wrapper-second" style="display: none;">
+      <img src="images/1_39.svg" class="status-ring ring-border armor-border-svg" id="stamina-border-svg-second" alt="">
+    </div>
+    <img src="images/d44d124803c90acc444053768a6b00711aac0a16.png" class="status-icon" alt="Stamina">
+  </div>
+</div>
+
+<section id="section-weapon-ammo">
+  <div class="weapon-ammo-container">
+    <img class="weapon-icon" id="weapon-icon" src="images/pistol-icon-1.png" alt="Weapon" style="display: none;">
+    <p class="weapon-ammo-text" id="weapon-ammo-text" style="display: none;">
+      <span class="weapon-ammo-current" id="weapon-ammo-current">0</span>
+      <span class="weapon-ammo-separator"> / </span>
+      <span class="weapon-ammo-max" id="weapon-ammo-max">0</span>
+      <div class="ammo-icon" id="ammo-icon" style="display: none;"></div>
+    </p>
+  </div>
+</section>
+
+<section id="section-dashboard">
+  <div class="dashboard-container">
+    <header class="dash-header">
+      <div class="header-left">
+        <h1 class="dash-title">DASHBOARD</h1>
+        <span class="dash-subtitle">Settings</span>
+      </div>
+      <div class="header-right">
+        <div class="header-info">
+          <span class="close-text" id="close-dashboard">CLOSE</span>
+          <span class="manager-text">Press ESC to close</span>
+        </div>
+        <button class="esc-button" id="esc-button">ESC</button>
+      </div>
+    </header>
+
+    <div class="separator-line"></div>
+
+    <div class="search-container">
+      <img src="images/50536bff0651bcc335f1118fff898bae1d42c7db.png" alt="Search" class="search-icon">
+      <input type="text" class="search-input" placeholder="Search HUD Settings...">
+    </div>
+
+    <div class="settings-group">
+      <div class="group-header">
+        <h2>HUD Settings</h2>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/9591224c2598a07364368cf0416adb84f4d66986.png" alt="Edit" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Primary Color</h3>
+            <p>Customize Primary Color</p>
+          </div>
+          <div class="row-controls">
+            <div class="color-display">
+              <div class="color-box green" data-color-type="primary" style="cursor: pointer;"></div>
+              <span class="color-code" data-color-type="primary">#1aff00</span>
+              <input type="color" class="color-picker" data-color-type="primary" style="display: none;" value="#1aff00">
+            </div>
+            <button class="save-btn">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="section-car-hud">
+  <div class="speedometer-container">
+    <div class="speedo-rings">
+      <img src="images/1_7.svg" class="ring-outer" alt="">
+      <div class="ring-inner-wrapper">
+        <img src="images/1_8.svg" class="ring-inner" id="speed-fill-svg" alt="">
+      </div>
+    </div>
+
+    <div class="speed-display">
+      <span class="speed-value" id="speed-value">0</span>
+      <span class="speed-unit">KM/H</span>
+    </div>
+
+    <img src="images/24c229881cfbe84cde6b0cffc237cd5d15435afa.png" class="fuel-icon" alt="Fuel">
+
+    <div class="speedo-dots">
+      <img src="images/1_17.svg" class="dot-1" alt="">
+      <div class="dot-2-wrapper">
+        <img src="images/1_18.svg" class="dot-2" id="fuel-fill-svg" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="car-status-bar">
+    <div class="car-status-item">
+      <img src="images/dc3ae812a8772cda47f11fc907e96e5753996c52.png" alt="Engine">
+      <div class="shortcut-key">
+        <span>CTRL</span>
+      </div>
+    </div>
+
+    <div class="car-status-item">
+      <img src="images/20fcd55d7815aaa7c9436fbf3dfd847363b51029.png" alt="Door">
+      <div class="shortcut-key">
+        <span>L</span>
+      </div>
+    </div>
+
+    <div class="car-status-item">
+      <img src="images/0ed9609e3192bfaf6a2fef9bc10cdc4e32667b8a.png" alt="Light">
+      <div class="shortcut-key">
+        <span>H</span>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
