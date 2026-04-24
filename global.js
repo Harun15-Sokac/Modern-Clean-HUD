@@ -449,13 +449,33 @@ window.addEventListener('message', function(event) {
 
       resetAndAnimateFuel(clampedPercent);
     }
-  } else if (data.type === 'setHUDVisible') {
-    if (data.visible) {
-      document.body.style.display = 'block';
-    } else {
-      document.body.style.display = 'none';
+    } else if (data.type === 'setHUDVisible') {
+      if (data.visible) {
+        document.body.style.display = 'block';
+      } else {
+        document.body.style.display = 'none';
+      }
+    } else if (data.type === 'updateVisibility') {
+      const keys = ['health', 'armor', 'hunger', 'thirst', 'stamina', 'location', 'job', 'wallet', 'bank', 'voice'];
+      keys.forEach(key => {
+        const saved = localStorage.getItem('hud_visible_' + key);
+        let isVisible = data[key];
+        if (saved !== null) {
+          isVisible = saved === 'true';
+        }
+        updateElementVisibility(key, isVisible);
+
+        const group = document.querySelector(`.toggle-group[data-setting="${key}"]`);
+        if (group) {
+          const buttons = group.querySelectorAll('.toggle-btn');
+          buttons.forEach(btn => {
+            const val = btn.getAttribute('data-value') === 'true';
+            if (val === isVisible) btn.classList.add('active');
+            else btn.classList.remove('active');
+          });
+        }
+      });
     }
-  }
 });
 
 let currentSpeedPercent = 0;
@@ -1186,24 +1206,103 @@ function setupDashboard() {
     body: JSON.stringify({ theme: savedTheme })
   });
 
-  const hudThemeToggle = document.querySelector('.setting-row .row-text h3');
-  if (hudThemeToggle && hudThemeToggle.textContent === 'HUD Theme') {
-    const toggleGroup = hudThemeToggle.closest('.setting-row').querySelector('.toggle-group');
-    if (toggleGroup) {
-      const toggleButtons = toggleGroup.querySelectorAll('.toggle-btn');
-      const savedColor = localStorage.getItem('hudPrimaryColor');
+  const allRows = document.querySelectorAll('.setting-row');
+  allRows.forEach(row => {
+    const h3 = row.querySelector('.row-text h3');
+    if (h3 && h3.textContent.trim() === 'HUD Theme') {
+      const toggleGroup = row.querySelector('.toggle-group');
+      if (toggleGroup) {
+        const toggleButtons = toggleGroup.querySelectorAll('.toggle-btn');
+        const savedColor = localStorage.getItem('hudPrimaryColor');
 
-      toggleButtons.forEach(btn => {
-        if (btn.textContent.trim() === savedTheme) {
-          btn.classList.add('active');
-          if (savedColor) {
-            btn.style.backgroundColor = savedColor;
+        toggleButtons.forEach(btn => {
+          if (btn.textContent.trim() === savedTheme) {
+            btn.classList.add('active');
+            if (savedColor) {
+              btn.style.backgroundColor = savedColor;
+            }
+          } else {
+            btn.classList.remove('active');
+            btn.style.backgroundColor = '#303030';
           }
+        });
+      }
+    }
+  });
+
+  const visibilityToggles = document.querySelectorAll('.toggle-group[data-setting]');
+  visibilityToggles.forEach(group => {
+    const settingKey = group.getAttribute('data-setting');
+    const buttons = group.querySelectorAll('.toggle-btn');
+
+    // Initial state from localStorage
+    const savedValue = localStorage.getItem('hud_visible_' + settingKey);
+    if (savedValue !== null) {
+      const isVisible = savedValue === 'true';
+      updateElementVisibility(settingKey, isVisible);
+
+      buttons.forEach(btn => {
+        const btnValue = btn.getAttribute('data-value') === 'true';
+        if (btnValue === isVisible) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const isVisible = this.getAttribute('data-value') === 'true';
+
+        buttons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        localStorage.setItem('hud_visible_' + settingKey, isVisible);
+        updateElementVisibility(settingKey, isVisible);
+      });
+    });
+  });
+}
+
+function updateElementVisibility(key, isVisible) {
+  const visibilityMap = {
+    'health': ['#health-item', '#health-item-second'],
+    'armor': ['#armor-item', '#armor-item-second'],
+    'hunger': ['#hunger-item', '#hunger-item-second'],
+    'thirst': ['#thirst-item', '#thirst-item-second'],
+    'stamina': ['#stamina-item', '#stamina-item-second'],
+    'location': ['.location-area'],
+    'voice': ['#voice-item', '#voice-item-second'],
+  };
+
+  if (visibilityMap[key]) {
+    visibilityMap[key].forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (!isVisible) {
+          el.classList.add('hidden-by-config');
         } else {
-          btn.classList.remove('active');
-          btn.style.backgroundColor = '#303030';
+          el.classList.remove('hidden-by-config');
         }
       });
+    });
+  }
+
+  const specialIds = {
+    'job': 'hud-job',
+    'wallet': 'hud-wallet',
+    'bank': 'hud-bank'
+  };
+
+  if (specialIds[key]) {
+    const el = document.getElementById(specialIds[key]);
+    if (el) {
+      const row = el.closest('.hud-info-row');
+      if (row) {
+        if (!isVisible) {
+          row.classList.add('hidden-by-config');
+        } else {
+          row.classList.remove('hidden-by-config');
+        }
+      }
     }
   }
 }

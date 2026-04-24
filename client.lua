@@ -77,6 +77,7 @@ RegisterNetEvent("esx:playerLoaded", function()
     Wait(500)
     RefreshMinimap()
     TriggerEvent('hud:client:LoadMap')
+    SendHUDConfig()
 end)
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
@@ -85,6 +86,7 @@ AddEventHandler('onResourceStart', function(resourceName)
     TriggerEvent('hud:client:LoadMap')
     Wait(1000)
     ResetHUDValues()
+    SendHUDConfig()
 end)
 CreateThread(function()
     SetMinimapComponentPosition("minimap", "L", "B", -0.03, -0.02, 0.1815, 0.207777)
@@ -421,6 +423,28 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     Wait(1000)
     SendMoneyData()
+    SendHUDConfig()
+end)
+
+function SendHUDConfig()
+    SendNUIMessage({
+        type = 'updateVisibility',
+        health = Config.EnableHealth,
+        armor = Config.EnableArmor,
+        hunger = Config.EnableHunger,
+        thirst = Config.EnableThirst,
+        stamina = Config.EnableStamina,
+        wallet = Config.EnableWallet,
+        bank = Config.EnableBank,
+        job = Config.EnableJob,
+        location = Config.EnableLocation,
+        voice = Config.EnableVoice
+    })
+end
+
+RegisterNetEvent('hud:client:SendConfig')
+AddEventHandler('hud:client:SendConfig', function()
+    SendHUDConfig()
 end)
 
 local lastHealth = 100
@@ -448,6 +472,7 @@ RegisterNetEvent('esx:onPlayerSpawn')
 AddEventHandler('esx:onPlayerSpawn', function()
     Wait(1500)
     ResetHUDValues()
+    SendHUDConfig()
 end)
 
 local dashboardOpen = false
@@ -486,6 +511,7 @@ ResetHUDValues = function()
         bank = bank
     })
     SendNUIMessage({ type = 'setVehicleState', inVehicle = IsPedInAnyVehicle(playerPed, false), alwaysMap = Config.AlwaysMap })
+    SendHUDConfig()
 end
 
 RegisterCommand('resethud', function()

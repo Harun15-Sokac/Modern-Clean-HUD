@@ -426,7 +426,7 @@ body.hud-loading #section-top-hud {
 
 .dashboard-container {
   width: 100%;
-  max-width: 650px;
+  max-width: 720px;
   background-color: #1b1b1b;
   border: 1px solid var(--hud-primary-color, rgba(255, 255, 255, 0.1));
   border-radius: 16px;
@@ -434,6 +434,7 @@ body.hud-loading #section-top-hud {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  max-height: 90vh;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -531,7 +532,7 @@ body.hud-loading #section-top-hud {
   display: flex;
   align-items: center;
   padding: 10px 14px;
-  margin: 0 12px;
+  margin: 0 15px;
   gap: 10px;
   transition: border-color 0.3s ease;
 }
@@ -561,17 +562,19 @@ body.hud-loading #section-top-hud {
 }
 
 .settings-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 0 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0 15px;
+  padding-bottom: 10px;
 }
 
 .group-header {
+  grid-column: span 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 4px;
+  padding: 10px 4px 0 4px;
 }
 
 .group-header h2 {
@@ -600,12 +603,12 @@ body.hud-loading #section-top-hud {
 .setting-row {
   background-color: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 10px;
-  padding: 14px 18px;
+  border-radius: 8px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  height: 65px;
+  gap: 14px;
+  height: 62px;
   transition: all 0.2s ease;
 }
 
@@ -616,8 +619,8 @@ body.hud-loading #section-top-hud {
 }
 
 .icon-wrapper {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   background-color: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
@@ -647,11 +650,11 @@ body.hud-loading #section-top-hud {
 .row-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .row-text h3 {
-  font-size: 14px;
+  font-size: 15px;
   margin: 0;
   font-weight: 500;
   color: #ffffff;
@@ -732,19 +735,16 @@ body.hud-loading #section-top-hud {
 }
 
 .toggle-btn {
-  background-color: transparent !important;
-  color: rgba(255, 255, 255, 0.5);
-  border: none;
-  border-radius: 6px;
-  height: 28px;
-  padding: 0 16px;
+  padding: 6px 16px;
+  border-radius: 5px;
   font-size: 12px;
-  min-width: 70px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 60px;
 }
 
 .toggle-btn.active {
@@ -933,7 +933,16 @@ body.hud-loading #section-top-hud {
   color: #ffffff;
 }
 
-  </style>
+  .hidden-by-config {
+  display: none !important;
+}
+.hidden-by-config {
+  display: none !important;
+}
+.hidden-by-config {
+  display: none !important;
+}
+</style>
   <script src="global.js" defer></script>
 </head>
 <body>
@@ -991,7 +1000,7 @@ body.hud-loading #section-top-hud {
 
     <div class="status-bar" id="status-bar-main">
 
-      <div class="status-item">
+      <div class="status-item" id="voice-item">
         <img src="images/1_5.svg" class="status-ring ring-bg" alt="">
 
         <div class="status-ring armor-border-wrapper" id="voice-border-wrapper">
@@ -1045,9 +1054,6 @@ body.hud-loading #section-top-hud {
         <img src="images/d44d124803c90acc444053768a6b00711aac0a16.png" class="status-icon" alt="Stamina">
       </div>
 
-      <div class="status-badge">
-        <span>2x</span>
-      </div>
 
     </div>
   </div>
@@ -1165,6 +1171,168 @@ body.hud-loading #section-top-hud {
               <input type="color" class="color-picker" data-color-type="primary" style="display: none;" value="#ff0000">
             </div>
             <button class="save-btn">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/39663ae9eda3e600b9036d0609177995505b5823.png" alt="Voice" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Mikrofon</h3>
+            <p>Prikaži ili sakrij indikator mikrofona</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="voice">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/cb11bfcf5c079c8672de58cb1f587d93695fa5dc.png" alt="Thirst" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Voda</h3>
+            <p>Prikaži ili sakrij indikator vode</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="thirst">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/fa9cc5db817d7dbfd830c68c99ca3c9eb5c476cb.png" alt="Hunger" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Hrana</h3>
+            <p>Prikaži ili sakrij indikator hrane</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="hunger">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/4bd88e3cfd45fb5011e80d4727d3d59fb73952fd.png" alt="Armor" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Pancir</h3>
+            <p>Prikaži ili sakrij indikator pancira</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="armor">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/d44d124803c90acc444053768a6b00711aac0a16.png" alt="Stamina" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Stamina</h3>
+            <p>Prikaži ili sakrij indikator umora</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="stamina">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/647531f9673fab0d8ae705b61efd876b1058dff4.png" alt="Wallet" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Novčanik</h3>
+            <p>Prikaži ili sakrij iznos keša</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="wallet">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/cf8cb3034c7e7ec1a961ab9abb3fb350beb9193d.png" alt="Bank" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Banka</h3>
+            <p>Prikaži ili sakrij stanje u banci</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="bank">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/job-icon.svg" alt="Job" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Posao</h3>
+            <p>Prikaži ili sakrij ime posla</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="job">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="icon-wrapper">
+          <img src="images/540b8a6ae6ca607f1a903b6adc8b652f3993f17d.png" alt="Location" class="edit-icon">
+        </div>
+        <div class="row-content">
+          <div class="row-text">
+            <h3>Lokacija</h3>
+            <p>Prikaži ili sakrij nazive ulica</p>
+          </div>
+          <div class="row-controls">
+            <div class="toggle-group" data-setting="location">
+              <button class="toggle-btn active" data-value="true">ON</button>
+              <button class="toggle-btn" data-value="false">OFF</button>
+            </div>
           </div>
         </div>
       </div>
