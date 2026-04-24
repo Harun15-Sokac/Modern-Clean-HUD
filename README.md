@@ -68,6 +68,8 @@ ensure your-hud
 ## ⚙️ Configuration
 
 * Customize colors
+* Toggle individual HUD elements
+* Enable or disable the minimap in the config
 
 ---
 
