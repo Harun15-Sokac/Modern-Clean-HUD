@@ -22,5 +22,6 @@ client_scripts {
 
 
 shared_scripts {
+    'config.lua',
     'server/helpers/vite_temp.js'
 }

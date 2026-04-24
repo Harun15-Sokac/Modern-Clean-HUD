@@ -1,5 +1,7 @@
 
 ESX = exports['es_extended']:getSharedObject()
+DisplayRadar(false)
+
 
 local hunger = 100
 local thirst = 100
@@ -92,6 +94,7 @@ CreateThread(function()
     RefreshMinimap()
 
     local wasInVehicle = false
+    local firstCheck = true
     local lastTheme = nil
 
     while true do
@@ -106,7 +109,7 @@ CreateThread(function()
                 DisplayRadar(true)
                 SetRadarBigmapEnabled(false, false)
                 
-                if not wasInVehicle or lastTheme ~= currentTheme then
+                if not wasInVehicle or lastTheme ~= currentTheme or firstCheck then
                     if currentTheme == 'Second' then
                         SetMinimapComponentPosition("minimap", "L", "B", -0.01, -0.05, 0.1815, 0.207777)
                         SetMinimapComponentPosition("minimap_mask", "L", "B", 0.00, -0.02, 0.1343, 0.1749)
@@ -117,11 +120,12 @@ CreateThread(function()
                         SetMinimapComponentPosition("minimap_blur", "L", "B", -0.04, -0.01, 0.3219, 0.2607)
                     end
 
-                    if not wasInVehicle then
+                    if not wasInVehicle or firstCheck then
                         SendNUIMessage({ type = 'setVehicleState', inVehicle = true })
                         wasInVehicle = true
                     end
                     lastTheme = currentTheme
+                    firstCheck = false
                 end
 
                 local vehicle = GetVehiclePedIsIn(playerPed, false)
@@ -153,10 +157,11 @@ CreateThread(function()
                     })
                 end
             else
-                if wasInVehicle then
+                if wasInVehicle or firstCheck then
                     DisplayRadar(false)
                     SendNUIMessage({ type = 'setVehicleState', inVehicle = false })
                     wasInVehicle = false
+                    firstCheck = false
                 end
             end
             
@@ -445,7 +450,7 @@ end)
 
 local dashboardOpen = false
 
-RegisterCommand('hudsettings', function()
+RegisterCommand(Config.SettingsCommand, function()
     dashboardOpen = not dashboardOpen
     SetNuiFocus(dashboardOpen, dashboardOpen)
     SendNUIMessage({
