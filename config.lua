@@ -1,7 +1,7 @@
 Config = {}
 
-Config.SettingsCommand = "hud" -- Komanda za otvaranje podešavanja HUD-a
-Config.AlwaysMap = true -- true: mapa se uvek vidi, false: mapa se vidi samo u vozilu
+Config.SettingsCommand = "hud" -- Command to open HUD settings
+Config.AlwaysMap = true -- true: map always visible, false: map visible only in vehicle
 
 Config.EnableHealth = true
 Config.EnableArmor = true
