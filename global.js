@@ -467,7 +467,7 @@ let targetFuelPercent = 0;
 let fuelAnimationFrame = null;
 
 function getColorFilterForPercent(percent) {
-  const savedColor = localStorage.getItem('hudPrimaryColor') || '#1aff00';
+  const savedColor = localStorage.getItem('hudPrimaryColor') || '#ff0000';
   const rgb = hexToRgb(savedColor);
 
   if (!rgb) {
@@ -526,7 +526,7 @@ function hexToRgb(hex) {
 }
 
 function getSavedColorFilter() {
-  const savedColor = localStorage.getItem('hudPrimaryColor') || '#1aff00';
+  const savedColor = localStorage.getItem('hudPrimaryColor') || '#ff0000';
   const rgb = hexToRgb(savedColor);
 
   if (!rgb) {
@@ -986,14 +986,15 @@ function setupDashboard() {
 
   const colorBoxes = document.querySelectorAll('.color-box[data-color-type]');
 
-  const savedColor = localStorage.getItem('hudPrimaryColor');
-  if (savedColor) {
-    const primaryColorPicker = document.querySelector('.color-picker[data-color-type="primary"]');
-    if (primaryColorPicker) {
-      primaryColorPicker.value = savedColor;
-    }
-    applyColorToHUD(savedColor);
+  let savedColor = localStorage.getItem('hudPrimaryColor');
+  if (!savedColor) {
+    savedColor = '#ff0000';
   }
+  const primaryColorPicker = document.querySelector('.color-picker[data-color-type="primary"]');
+  if (primaryColorPicker) {
+    primaryColorPicker.value = savedColor;
+  }
+  applyColorToHUD(savedColor);
 
   colorBoxes.forEach(colorBox => {
     const colorType = colorBox.getAttribute('data-color-type');
