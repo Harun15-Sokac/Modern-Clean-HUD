@@ -328,7 +328,7 @@ window.addEventListener('message', function(event) {
     const locationArea = document.querySelector('.location-area');
     const carHud = document.getElementById('section-car-hud');
     if (locationArea) {
-      if (data.inVehicle) {
+      if (data.inVehicle || data.alwaysMap) {
         const savedTheme = localStorage.getItem('hudTheme') || 'Main';
         const isSecondTheme = savedTheme === 'Second';
 

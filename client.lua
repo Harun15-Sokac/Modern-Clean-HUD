@@ -97,19 +97,21 @@ CreateThread(function()
     local firstCheck = true
     local lastTheme = nil
 
+    Wait(1500)
     while true do
         local sleep = 1000
         local playerPed = PlayerPedId()
 
         if not isHudHidden then
             local isInVehicle = IsPedInAnyVehicle(playerPed, false)
+            local showRadar = isInVehicle or Config.AlwaysMap
 
-            if isInVehicle then
-                sleep = 100 -- Faster updates for smooth speedometer
+            if showRadar then
+                sleep = isInVehicle and 100 or 1000
                 DisplayRadar(true)
                 SetRadarBigmapEnabled(false, false)
                 
-                if not wasInVehicle or lastTheme ~= currentTheme or firstCheck then
+                if wasInVehicle ~= isInVehicle or lastTheme ~= currentTheme or firstCheck then
                     if currentTheme == 'Second' then
                         SetMinimapComponentPosition("minimap", "L", "B", -0.01, -0.05, 0.1815, 0.207777)
                         SetMinimapComponentPosition("minimap_mask", "L", "B", 0.00, -0.02, 0.1343, 0.1749)
@@ -120,46 +122,46 @@ CreateThread(function()
                         SetMinimapComponentPosition("minimap_blur", "L", "B", -0.04, -0.01, 0.3219, 0.2607)
                     end
 
-                    if not wasInVehicle or firstCheck then
-                        SendNUIMessage({ type = 'setVehicleState', inVehicle = true })
-                        wasInVehicle = true
-                    end
+                    SendNUIMessage({ type = 'setVehicleState', inVehicle = isInVehicle, alwaysMap = Config.AlwaysMap })
+                    wasInVehicle = isInVehicle
                     lastTheme = currentTheme
                     firstCheck = false
                 end
 
-                local vehicle = GetVehiclePedIsIn(playerPed, false)
-                if vehicle and vehicle > 0 then
-                    local speed = GetEntitySpeed(vehicle) * 3.6
-                    local fuel = 100
-                    local fuelLevel = nil
-                    if Entity(vehicle) and Entity(vehicle).state and Entity(vehicle).state.fuel ~= nil then
-                        fuelLevel = Entity(vehicle).state.fuel
-                    else
-                        fuelLevel = GetVehicleFuelLevel(vehicle)
-                    end
-
-                    if fuelLevel and fuelLevel >= 0 then
-                        if fuelLevel <= 1.0 and fuelLevel > 0.0 and GetVehicleClass(vehicle) ~= 13 then
-                            fuel = fuelLevel * 100
+                if isInVehicle then
+                    local vehicle = GetVehiclePedIsIn(playerPed, false)
+                    if vehicle and vehicle > 0 then
+                        local speed = GetEntitySpeed(vehicle) * 3.6
+                        local fuel = 100
+                        local fuelLevel = nil
+                        if Entity(vehicle) and Entity(vehicle).state and Entity(vehicle).state.fuel ~= nil then
+                            fuelLevel = Entity(vehicle).state.fuel
                         else
-                            fuel = fuelLevel
+                            fuelLevel = GetVehicleFuelLevel(vehicle)
                         end
-                    end
-                    fuel = math.max(0, math.min(100, fuel))
 
-                    SendNUIMessage({
-                        type = 'updateCarHUD',
-                        speed = math.floor(speed),
-                        maxSpeed = GetVehicleEstimatedMaxSpeed(vehicle) * 3.6,
-                        fuel = fuel,
-                        maxFuel = 100
-                    })
+                        if fuelLevel and fuelLevel >= 0 then
+                            if fuelLevel <= 1.0 and fuelLevel > 0.0 and GetVehicleClass(vehicle) ~= 13 then
+                                fuel = fuelLevel * 100
+                            else
+                                fuel = fuelLevel
+                            end
+                        end
+                        fuel = math.max(0, math.min(100, fuel))
+
+                        SendNUIMessage({
+                            type = 'updateCarHUD',
+                            speed = math.floor(speed),
+                            maxSpeed = GetVehicleEstimatedMaxSpeed(vehicle) * 3.6,
+                            fuel = fuel,
+                            maxFuel = 100
+                        })
+                    end
                 end
             else
-                if wasInVehicle or firstCheck then
+                if wasInVehicle ~= false or firstCheck then
                     DisplayRadar(false)
-                    SendNUIMessage({ type = 'setVehicleState', inVehicle = false })
+                    SendNUIMessage({ type = 'setVehicleState', inVehicle = false, alwaysMap = Config.AlwaysMap })
                     wasInVehicle = false
                     firstCheck = false
                 end
@@ -483,6 +485,7 @@ ResetHUDValues = function()
         wallet = wallet,
         bank = bank
     })
+    SendNUIMessage({ type = 'setVehicleState', inVehicle = IsPedInAnyVehicle(playerPed, false), alwaysMap = Config.AlwaysMap })
 end
 
 RegisterCommand('resethud', function()
