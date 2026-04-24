@@ -39,7 +39,8 @@ Designed to provide all essential player information without clutter, focusing o
 
 ## 🖼️ Preview
 
-![HUD Preview](https://imgur.com/NZC2IoU)
+![HUD Preview](<img width="1685" height="953" alt="image" src="https://github.com/user-attachments/assets/41e232cd-4b45-48ba-9b46-49e3b2c7219b" />
+)
 
 ---
 
