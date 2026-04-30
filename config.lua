@@ -1,7 +1,8 @@
 Config = {}
+Config.Framework = 'esx' -- 'esx' or 'qb'
 
 Config.SettingsCommand = "hud" -- Command to open HUD settings
-Config.AlwaysMap = true -- true: map always visible, false: map visible only in vehicle
+Config.AlwaysMap = false -- true: map always visible, false: map visible only in vehicle
 
 Config.EnableHealth = true
 Config.EnableArmor = true

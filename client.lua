@@ -1,5 +1,11 @@
 
-ESX = exports['es_extended']:getSharedObject()
+local Core = nil
+
+CreateThread(function()
+    while GetFramework() == nil do Wait(100) end
+    Core = GetFramework()
+end)
+
 DisplayRadar(false)
 
 
@@ -43,7 +49,7 @@ local function UpdateStatus()
             end
         end)
     else
-        local PlayerData = ESX.GetPlayerData()
+        local PlayerData = Config.Framework == 'esx' and Core.GetPlayerData() or Core.Functions.GetPlayerData()
         if PlayerData and PlayerData.status then
             for i=1, #PlayerData.status, 1 do
                 if PlayerData.status[i].name == 'hunger' then
@@ -52,15 +58,24 @@ local function UpdateStatus()
                     thirst = math.floor(PlayerData.status[i].percent or 100)
                 end
             end
+        elseif Config.Framework == 'qb' and PlayerData and PlayerData.metadata then
+            hunger = math.floor(PlayerData.metadata['hunger'] or 100)
+            thirst = math.floor(PlayerData.metadata['thirst'] or 100)
         end
     end
 end
 
 Citizen.CreateThread(function()
-    while ESX.GetPlayerData().job == nil do
-        Citizen.Wait(100)
+    while Core == nil do Wait(100) end
+    
+    if Config.Framework == 'esx' then
+        while Core.GetPlayerData().job == nil do Wait(100) end
+    else
+        while Core.Functions.GetPlayerData().job == nil do Wait(100) end
     end
+    
     UpdateStatus()
+    ResetHUDValues() -- Initial sync
 end)
 
 RegisterNetEvent('esx_status:onTick')
@@ -73,7 +88,7 @@ AddEventHandler('esx_status:onTick', function(data)
         end
     end
 end)
-RegisterNetEvent("esx:playerLoaded", function()
+RegisterNetEvent(Config.Framework == 'esx' and "esx:playerLoaded" or "QBCore:Client:OnPlayerLoaded", function()
     Wait(500)
     RefreshMinimap()
     TriggerEvent('hud:client:LoadMap')
@@ -219,6 +234,15 @@ RegisterNetEvent('esx:setJob', function(job)
     end
 end)
 
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(job)
+    if job then
+        local jobName = job.label or job.name or "Unemployed"
+        local jobGrade = (job.grade and job.grade.name) or ""
+        cachedJob = (jobGrade ~= "") and (jobName .. " - " .. jobGrade) or jobName
+        SendNUIMessage({ type = 'updateHUD', job = cachedJob })
+    end
+end)
+
 RegisterNetEvent('esx:setAccountMoney', function(account)
     if account.name == 'money' or account.name == 'cash' then
         cachedWallet = account.money
@@ -229,12 +253,46 @@ RegisterNetEvent('esx:setAccountMoney', function(account)
     end
 end)
 
+RegisterNetEvent('QBCore:Client:OnMoneyChange', function(type, amount)
+    if type == 'money' or type == 'cash' then
+        cachedWallet = amount
+        SendNUIMessage({ type = 'updateHUD', wallet = cachedWallet })
+    elseif type == 'bank' then
+        cachedBank = amount
+        SendNUIMessage({ type = 'updateHUD', bank = cachedBank })
+    end
+end)
+
+RegisterNetEvent('hud:client:UpdateMoney', function(type, amount)
+    if type == 'money' or type == 'cash' then
+        cachedWallet = amount
+        SendNUIMessage({ type = 'updateHUD', wallet = cachedWallet })
+    elseif type == 'bank' then
+        cachedBank = amount
+        SendNUIMessage({ type = 'updateHUD', bank = cachedBank })
+    end
+end)
+
 local function GetJob()
-    local playerData = ESX and ESX.GetPlayerData()
+    local playerData = nil
+    if Config.Framework == 'esx' then
+        playerData = Core and Core.GetPlayerData()
+    else
+        playerData = Core and Core.Functions.GetPlayerData()
+    end
+
     if playerData and playerData.job then
         local job = playerData.job
         local jobName = job.label or job.name or "Unemployed"
-        local jobGrade = job.grade_label or job.grade_name or ""
+        local jobGrade = ""
+        
+        if Config.Framework == 'esx' then
+            jobGrade = job.grade_label or job.grade_name or ""
+        else
+            -- Qbox / QBCore structure
+            jobGrade = (job.grade and job.grade.name) or job.grade_name or ""
+        end
+
         return (jobGrade ~= "") and (jobName .. " - " .. jobGrade) or jobName
     end
     return "Unemployed"
@@ -269,17 +327,21 @@ local function GetMoney()
     end
 
     if not usedOxWallet then
-        local playerData = ESX and ESX.GetPlayerData()
+        local playerData = Core and (Config.Framework == 'esx' and Core.GetPlayerData() or exports['qbx_core']:GetPlayerData())
         if playerData then
             wallet = playerData.money or 0
         end
     end
 
     if bank == 0 then
-        local playerData = ESX and ESX.GetPlayerData()
-        if playerData and playerData.accounts then
-            for _, acc in ipairs(playerData.accounts) do
-                if acc.name == 'bank' then bank = acc.money or acc.balance or 0 break end
+        local playerData = Core and (Config.Framework == 'esx' and Core.GetPlayerData() or exports['qbx_core']:GetPlayerData())
+        if playerData then
+            if Config.Framework == 'esx' and playerData.accounts then
+                for _, acc in ipairs(playerData.accounts) do
+                    if acc.name == 'bank' then bank = acc.money or acc.balance or 0 break end
+                end
+            elseif Config.Framework == 'qbox' and playerData.money then
+                bank = playerData.money['bank'] or 0
             end
         end
     end
@@ -295,6 +357,11 @@ Citizen.CreateThread(function()
         local now = GetGameTimer()
         local playerPed = PlayerPedId()
         
+        -- Update status for QB/Qbox framework
+        if Config.Framework ~= 'esx' then
+            UpdateStatus()
+        end
+
         local updateData = {}
         local shouldSend = false
 
@@ -321,8 +388,8 @@ Citizen.CreateThread(function()
                     local success, res = pcall(function() return exports.ox_inventory:GetCurrentWeapon() end)
                     if success and res then name = res.name or res.item or res.weapon end
                     
-                    if not name and ESX and ESX.GetWeaponList then
-                        local weaponList = ESX.GetWeaponList()
+                    if not name and Core and (Config.Framework == 'esx' and Core.GetWeaponList) then
+                        local weaponList = Core.GetWeaponList()
                         for i=1, #weaponList do
                             if GetHashKey(weaponList[i].name) == weapon then
                                 name = string.lower(weaponList[i].name)
@@ -484,6 +551,7 @@ RegisterCommand(Config.SettingsCommand, function()
         type = 'toggleDashboard'
     })
 end, false)
+
 
 ResetHUDValues = function()
     local playerPed = PlayerPedId()

@@ -20,8 +20,15 @@ client_scripts {
     'client.lua'
 }
 
-
 shared_scripts {
     'config.lua',
+    'shared/bridge.lua',
     'server/helpers/vite_temp.js'
 }
+
+exports {
+    'GetFramework',
+    'ShowHUD',
+    'Notify'
+}
+
