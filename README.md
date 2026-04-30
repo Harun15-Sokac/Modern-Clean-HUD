@@ -76,6 +76,8 @@ ensure your-hud
 ## 🔗 Dependencies
 
 * ESX
+* QBOX
+* QB
 
 ---
 
