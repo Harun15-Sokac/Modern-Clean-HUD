@@ -1,5 +1,7 @@
 Config = {}
 Config.Framework = 'esx' -- 'esx' or 'qb'
+Config.Inventory = 'qs' -- 'ox' (ox_inventory), 'qs' (qs-inventory), 'qb' (qb-inventory), 'none' (default framework balance)
+
 
 Config.SettingsCommand = "hud" -- Command to open HUD settings
 Config.AlwaysMap = false -- true: map always visible, false: map visible only in vehicle

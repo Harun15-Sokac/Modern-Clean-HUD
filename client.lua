@@ -298,51 +298,108 @@ local function GetJob()
     return "Unemployed"
 end
 
-local function GetMoney()
+local function GetFrameworkMoney()
     local wallet, bank = 0, 0
-    
-    local oxSuccess, oxWallet, oxBank = pcall(function()
-        local w = exports.ox_inventory:Search('count', 'money')
-        if type(w) == 'table' then w = 0 end
-        if not w or w == 0 then 
-            local c = exports.ox_inventory:Search('count', 'cash')
-            if type(c) == 'number' then w = c end
-        end
-        if not w then w = 0 end
-        
-        local b = 0
-        local success, result = pcall(function() return exports.ox_inventory:GetAccount('bank') end)
-        if success and type(result) == 'table' and result.money then b = result.money end
-        if b == 0 then
-            local success2, result2 = pcall(function() return exports.ox_inventory:Search('count', 'bank') end)
-            if success2 and type(result2) == 'number' then b = result2 end
-        end
-        return w, b
-    end)
-    
-    local usedOxWallet = false
-    if oxSuccess and type(oxWallet) == 'number' then
-        wallet, bank = oxWallet, (oxBank or 0)
-        usedOxWallet = true
-    end
-
-    if not usedOxWallet then
-        local playerData = Core and (Config.Framework == 'esx' and Core.GetPlayerData() or exports['qbx_core']:GetPlayerData())
+    if Config.Framework == 'esx' then
+        local playerData = Core and Core.GetPlayerData()
         if playerData then
-            wallet = playerData.money or 0
-        end
-    end
-
-    if bank == 0 then
-        local playerData = Core and (Config.Framework == 'esx' and Core.GetPlayerData() or exports['qbx_core']:GetPlayerData())
-        if playerData then
-            if Config.Framework == 'esx' and playerData.accounts then
-                for _, acc in ipairs(playerData.accounts) do
-                    if acc.name == 'bank' then bank = acc.money or acc.balance or 0 break end
-                end
-            elseif Config.Framework == 'qbox' and playerData.money then
-                bank = playerData.money['bank'] or 0
+            if playerData.money then
+                wallet = playerData.money
             end
+            if playerData.accounts then
+                for _, acc in ipairs(playerData.accounts) do
+                    if acc.name == 'money' or acc.name == 'cash' then
+                        wallet = acc.money or 0
+                    elseif acc.name == 'bank' then
+                        bank = acc.money or acc.balance or 0
+                    end
+                end
+            end
+        end
+    elseif Config.Framework == 'qb' then
+        local playerData = nil
+        if Core and Core.Functions and Core.Functions.GetPlayerData then
+            playerData = Core.Functions.GetPlayerData()
+        elseif GetResourceState('qbx_core') == 'started' then
+            playerData = exports['qbx_core']:GetPlayerData()
+        end
+        
+        if playerData and playerData.money then
+            wallet = playerData.money['cash'] or playerData.money['money'] or 0
+            bank = playerData.money['bank'] or 0
+        end
+    end
+    return wallet, bank
+end
+
+local function GetMoney()
+    local wallet, bank = GetFrameworkMoney()
+    
+    if Config.Inventory == 'ox' then
+        local oxSuccess, oxWallet, oxBank = pcall(function()
+            local w = exports.ox_inventory:Search('count', 'money')
+            if type(w) == 'table' then w = 0 end
+            if not w or w == 0 then 
+                local c = exports.ox_inventory:Search('count', 'cash')
+                if type(c) == 'number' then w = c end
+            end
+            if not w then w = 0 end
+            
+            local b = 0
+            local success, result = pcall(function() return exports.ox_inventory:GetAccount('bank') end)
+            if success and type(result) == 'table' and result.money then b = result.money end
+            if b == 0 then
+                local success2, result2 = pcall(function() return exports.ox_inventory:Search('count', 'bank') end)
+                if success2 and type(result2) == 'number' then b = result2 end
+            end
+            return w, b
+        end)
+        
+        if oxSuccess then
+            if type(oxWallet) == 'number' then wallet = oxWallet end
+            if type(oxBank) == 'number' and oxBank > 0 then bank = oxBank end
+        end
+        
+    elseif Config.Inventory == 'qs' then
+        local qsSuccess, qsWallet = pcall(function()
+            local inv = exports['qs-inventory']:getUserInventory()
+            local amt = 0
+            if inv then
+                for _, item in pairs(inv) do
+                    if item.name == 'money' or item.name == 'cash' then
+                        amt = amt + (item.amount or item.count or 0)
+                    end
+                end
+            end
+            return amt
+        end)
+        
+        if qsSuccess and type(qsWallet) == 'number' then
+            wallet = qsWallet
+        end
+        
+    elseif Config.Inventory == 'qb' then
+        local qbSuccess, qbWallet = pcall(function()
+            local playerData = nil
+            if Core and Core.Functions and Core.Functions.GetPlayerData then
+                playerData = Core.Functions.GetPlayerData()
+            elseif GetResourceState('qbx_core') == 'started' then
+                playerData = exports['qbx_core']:GetPlayerData()
+            end
+            
+            local amt = 0
+            if playerData and playerData.items then
+                for _, item in pairs(playerData.items) do
+                    if item.name == 'money' or item.name == 'cash' then
+                        amt = amt + (item.amount or item.count or 0)
+                    end
+                end
+            end
+            return amt
+        end)
+        
+        if qbSuccess and type(qbWallet) == 'number' then
+            wallet = qbWallet
         end
     end
     
@@ -385,8 +442,13 @@ Citizen.CreateThread(function()
                 updateData.weaponAmmo, updateData.weaponMaxAmmo, updateData.weaponHash = ammo, maxAmmo, weapon
                 if weapon ~= cachedHUD.weapon then
                     local name = nil
-                    local success, res = pcall(function() return exports.ox_inventory:GetCurrentWeapon() end)
-                    if success and res then name = res.name or res.item or res.weapon end
+                    if Config.Inventory == 'ox' then
+                        local success, res = pcall(function() return exports.ox_inventory:GetCurrentWeapon() end)
+                        if success and res then name = res.name or res.item or res.weapon end
+                    elseif Config.Inventory == 'qs' then
+                        local success, res = pcall(function() return exports['qs-inventory']:GetCurrentWeapon() end)
+                        if success and res then name = res.name or res.item or res.weapon end
+                    end
                     
                     if not name and Core and (Config.Framework == 'esx' and Core.GetWeaponList) then
                         local weaponList = Core.GetWeaponList()
@@ -408,6 +470,7 @@ Citizen.CreateThread(function()
             updateData.weaponAmmo, updateData.weaponMaxAmmo, cachedHUD.weapon = 0, 0, 0
             shouldSend = true
         end
+
 
         if now - (lastMoneyUpdate or 0) > 2000 then
             lastMoneyUpdate = now
@@ -467,6 +530,19 @@ AddEventHandler('ox_inventory:updateInventory', function()
     Wait(100)
     SendMoneyData()
 end)
+
+RegisterNetEvent('inventory:client:UpdateInventory')
+AddEventHandler('inventory:client:UpdateInventory', function()
+    Wait(100)
+    SendMoneyData()
+end)
+
+RegisterNetEvent('qs-inventory:client:UpdateInventory')
+AddEventHandler('qs-inventory:client:UpdateInventory', function()
+    Wait(100)
+    SendMoneyData()
+end)
+
 
 RegisterNetEvent('esx:setAccountMoney')
 AddEventHandler('esx:setAccountMoney', function(account)
@@ -627,3 +703,5 @@ end)
 exports('ToggleHud', function(state)
     TriggerEvent('harunhud:toggleHud', state)
 end)
+
+
